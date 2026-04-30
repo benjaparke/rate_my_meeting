@@ -225,10 +225,17 @@ const riskColor = useMemo(() => {
       <h4 className="font-bold text-teal">Optional improved agenda</h4>
       <pre className="mt-2 whitespace-pre-wrap text-sm">
         {result.improvedAgenda}
-      </pre>
-    </div>
+    </pre>
+</div>
   </div>
 )}
+          </div>
+        </section>
+      </div>
+    </div>
+  )
+}
+
 function scoreMeeting(form) {
   let score = 40
   const flags = []
