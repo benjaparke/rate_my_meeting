@@ -1,6 +1,5 @@
 import React from 'react'
 import { useMemo, useState } from 'react'
-const observationText = (flag, form) => ({
 const sampleAgendas = {
   weekly: {
     title: 'Weekly Team Update',
@@ -125,6 +124,7 @@ const recommendationsMap = {
 function App() {
   const [form, setForm] = useState(defaultForm)
   const [result, setResult] = useState(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   const handleMaterialToggle = (item) => {
     setForm((prev) => ({
@@ -133,9 +133,24 @@ function App() {
     }))
   }
 
-  const evaluate = () => {
+  const evaluate = async () => {
+    setIsAnalyzing(true)
     const analysis = scoreMeeting(form)
-    setResult(analysis)
+
+    try {
+      const insights = await generateInsights({ score: analysis.score, flags: analysis.flags, form })
+      setResult({
+        ...analysis,
+        summary: insights.summary,
+        observations: insights.observations,
+        recommendations: insights.recommendations
+      })
+    } catch (error) {
+      console.error('Failed to generate AI insights, using fallback:', error)
+      setResult(analysis)
+    } finally {
+      setIsAnalyzing(false)
+    }
   }
 
 const riskColor = useMemo(() => {
@@ -186,7 +201,7 @@ const riskColor = useMemo(() => {
                 <Toggle label="Decision expected?" value={form.decisionRequired} onChange={(val) => setForm({ ...form, decisionRequired: val })} />
               </DoubleRow>
 
-              <button onClick={evaluate} className="w-full rounded-xl bg-orange py-3 text-lg font-bold text-white shadow-lg transition hover:translate-y-[-1px] hover:brightness-110">Run Reality Check</button>
+              <button onClick={evaluate} disabled={isAnalyzing} className="w-full rounded-xl bg-orange py-3 text-lg font-bold text-white shadow-lg transition hover:translate-y-[-1px] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">{isAnalyzing ? 'Analyzing...' : 'Run Reality Check'}</button>
               <p className="text-center text-sm text-slate-600">Takes ~20 seconds. No one will know you checked.</p>
             </div>
           </div>
@@ -311,6 +326,76 @@ if (observations.length < 3) {
     observations: observations.slice(0, 5),
     recommendations,
     improvedAgenda: buildAgenda(form),
+    flags: uniqueFlags,
+  }
+}
+
+
+async function generateInsights({ score, flags, form }) {
+  const apiKey = import.meta.env.VITE_OPENAI_API_KEY
+
+  if (!apiKey) {
+    throw new Error('Missing VITE_OPENAI_API_KEY')
+  }
+
+  const response = await fetch('https://api.openai.com/v1/responses', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      input: [
+        {
+          role: 'system',
+          content: [
+            {
+              type: 'input_text',
+              text: 'You are a meeting coach. Return valid JSON only with keys: summary, observations, recommendations. observations must be an array of exactly 3 strings. recommendations must be an array of objects with title, why, example.'
+            }
+          ]
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'input_text',
+              text: JSON.stringify({
+                engagementScore: score,
+                flags,
+                purpose: form.purpose,
+                agenda: form.agenda,
+                outcome: form.outcome
+              })
+            }
+          ]
+        }
+      ]
+    })
+  })
+
+  if (!response.ok) {
+    throw new Error(`OpenAI request failed: ${response.status}`)
+  }
+
+  const data = await response.json()
+  const content = data.output_text || data.output?.[0]?.content?.[0]?.text
+
+  if (!content) {
+    throw new Error('No model output')
+  }
+
+  const parsed = JSON.parse(content)
+
+  if (!parsed.summary || !Array.isArray(parsed.observations) || !Array.isArray(parsed.recommendations)) {
+    throw new Error('Invalid response shape')
+  }
+
+  return {
+    summary: parsed.summary,
+    observations: parsed.observations,
+    recommendations: parsed.recommendations
   }
 }
 
