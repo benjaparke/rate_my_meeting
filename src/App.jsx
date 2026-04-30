@@ -67,15 +67,59 @@ const defaultForm = {
 }
 
 const recommendationsMap = {
-  'Passive audience risk': ['Break the spectator pattern', 'Frequent interaction keeps attention and retention up.', 'Insert a poll, round-robin, or mini exercise every 10–15 minutes.'],
-  'Too much presentation time': ['Shift updates out of the room', 'Live meetings are expensive airtime; avoid using them as slide theater.', 'Send updates as a pre-read and use the meeting for discussion or decisions.'],
-  'Unclear outcome': ['Define the finish line', 'People engage more when success is concrete and testable.', 'Rewrite outcome as: “By the end, we will decide X and assign owner Y by date Z.”'],
-  'No early interaction': ['Hook people in minute one', 'Early participation sets expectations for active contribution.', 'Start with a quick prompt: “What’s the biggest risk we should solve today?”'],
-  'Status meeting inflation': ['Deflate status overload', 'Status-heavy sessions often become passive and repetitive.', 'Replace routine updates with an async summary, then focus live time on blockers.'],
-  'Large audience, low participation': ['Design for scale', 'Bigger rooms need structure so quieter voices still contribute.', 'Assign roles or use breakout groups to gather input before group synthesis.'],
-  'Agenda-to-purpose mismatch': ['Realign the meeting spine', 'When purpose and agenda diverge, the room feels unfocused fast.', 'Choose one purpose (inform/discuss/decide/create/learn) and prune agenda items that don’t serve it.'],
-  'Decision not named': ['Name the decision explicitly', 'Without a named decision, accountability usually evaporates.', 'Add an agenda line: “Decision: approve ___; Owner: ___; Deadline: ___.”'],
-  'Could be handled asynchronously': ['Consider canceling with confidence', 'Sometimes the best meeting is no meeting.', 'Convert this to a written update with clear asks and let people respond async.']
+  'Passive audience risk': [
+    'Shift from audience to participants',
+    'Right now, most people are positioned as listeners, which leads to rapid disengagement.',
+    'Add a structured input every 10–15 minutes (poll, round-robin, or quick decision prompt).'
+  ],
+
+  'Too much presentation time': [
+    'Move information out of the meeting',
+    'Live time is best used for thinking, not consuming slides.',
+    'Send updates as a pre-read and use the meeting for discussion, tradeoffs, or decisions.'
+  ],
+
+  'Unclear outcome': [
+    'Define what success looks like',
+    'Without a clear outcome, the meeting will feel directionless and low-stakes.',
+    'Rewrite as: “By the end of this meeting, we will decide X and assign Y by Z.”'
+  ],
+
+  'No early interaction': [
+    'Engage people immediately',
+    'The first 10 minutes sets the tone for participation.',
+    'Start with a prompt: “What’s the biggest risk we need to solve today?”'
+  ],
+
+  'Status meeting inflation': [
+    'Stop using meetings for status updates',
+    'Status-heavy meetings create passive listening and low-value airtime.',
+    'Replace updates with async summaries and reserve the meeting for blockers and decisions.'
+  ],
+
+  'Large audience, low participation': [
+    'Design for participation at scale',
+    'Large groups require structure to avoid most people staying silent.',
+    'Use breakout groups, role assignments, or written input before group discussion.'
+  ],
+
+  'Agenda-to-purpose mismatch': [
+    'Pick one job for this meeting',
+    'The agenda is trying to do multiple things, which diffuses focus.',
+    'Decide whether this is a decision, discussion, or alignment meeting, and remove everything else.'
+  ],
+
+  'Decision not named': [
+    'Make the decision explicit',
+    'If the decision is not named, it usually won’t happen.',
+    'Add: “Decision: ___ | Owner: ___ | Deadline: ___” to the agenda.'
+  ],
+
+  'Could be handled asynchronously': [
+    'Consider canceling this meeting',
+    'There is no clear need for real-time discussion.',
+    'Send a written update with clear asks instead of holding a live meeting.'
+  ]
 }
 
 function App() {
@@ -149,10 +193,15 @@ function App() {
           <div className={`rounded-3xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur transition-all duration-500 ${result ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-2'}`}>
             {!result ? <p className="mt-20 text-center text-slate-200">Run a reality check to reveal score, risks, and fast fixes.</p> : (
               <div className="space-y-5">
-                <h3 className="text-xl font-bold text-white">Engagement Risk Score</h3>
-                <div className={`text-7xl font-black ${riskColor}`}>{result.score}</div>
-                <p className="text-lg font-semibold text-white">{result.label}</p>
-                <p className="text-slate-200">{result.summary}</p>
+              <h3 className="text-xl font-bold text-white">Engagement Score</h3>
+<div className={`text-7xl font-black ${riskColor}`}>{result.score}</div>
+<p className="text-lg font-semibold text-white">{result.label}</p>
+
+<p className="text-sm text-slate-300">
+  Based on structure, participation design, and clarity of outcome
+</p>
+
+<p className="text-slate-200 mt-2">{result.summary}</p>
                 <Card title="What's likely to happen" items={result.observations} />
                 <div className="space-y-3">
                   <h4 className="text-lg font-bold text-white">Best fixes</h4>
@@ -171,10 +220,9 @@ function App() {
   )
 }
 
-function scoreMeeting(form) { /* condensed for brevity? no */
+function scoreMeeting(form) {
   let score = 40
   const flags = []
-  const obs = []
   const agenda = form.agenda.toLowerCase()
   const outcome = form.outcome.toLowerCase().trim()
   const purpose = form.purpose.toLowerCase()
@@ -211,11 +259,27 @@ function scoreMeeting(form) { /* condensed for brevity? no */
   if (form.decisionRequired === 'yes' && !decisionNamed) flags.push('Decision not named')
   if (form.meetingType === 'Status / Update' && form.decisionRequired === 'no' && !hasInteractiveAgenda) flags.push('Could be handled asynchronously')
 
-  score = Math.max(0, Math.min(100, score))
-  const label = score < 25 ? 'Low Risk' : score < 50 ? 'Moderate Risk' : score < 75 ? 'High Risk' : 'This might be an email'
-  const uniqueFlags = [...new Set(flags)].slice(0, 5)
-  obs.push(...uniqueFlags.map((f) => observationText(f)))
-  if (obs.length < 3) obs.push('Your structure is decent, but a sharper outcome and stronger participation design will increase engagement.')
+ score = Math.max(0, Math.min(100, score))
+
+const engagementScore = 100 - score
+
+const label = engagementScore > 75
+  ? 'Highly Engaging'
+  : engagementScore > 50
+    ? 'Moderately Engaging'
+    : engagementScore > 25
+      ? 'At Risk of Dragging'
+      : 'This might be an email'
+
+const uniqueFlags = [...new Set(flags)].slice(0, 5)
+
+  if (observations.length < 3) {
+    observations.push(
+      'The agenda includes clear structure and sequencing.',
+      'Participants have defined roles beyond passive listening.',
+      'The meeting design supports its intended outcome.'
+    )
+  }
 
   const recommendations = uniqueFlags.slice(0, 3).map((flag) => {
     const [title, why, example] = recommendationsMap[flag] || recommendationsMap['Unclear outcome']
@@ -223,13 +287,21 @@ function scoreMeeting(form) { /* condensed for brevity? no */
   })
 
   return {
-    score,
+    score: engagementScore,
     label,
-    summary: obs[0] || 'This meeting is in good shape with a few tactical tweaks.',
-    observations: obs.slice(0, 5),
+    summary: buildSummary(score, uniqueFlags),
+    observations: observations.slice(0, 5),
     recommendations,
     improvedAgenda: buildAgenda(form),
   }
+}
+
+const buildSummary = (score, flags) => {
+  if (score < 25) return 'Well-structured meeting with strong engagement design.'
+  if (flags.includes('Agenda-to-purpose mismatch')) return 'The structure is solid, but the meeting lacks a clear throughline.'
+  if (flags.includes('Passive audience risk')) return 'This meeting leans too heavily on passive listening.'
+  if (flags.includes('Unclear outcome')) return 'The meeting lacks a clear, concrete outcome.'
+  return 'This meeting will work, but a few design tweaks will improve engagement.'
 }
 
 const isMismatch = (purpose, type) => {
@@ -245,16 +317,16 @@ const isMismatch = (purpose, type) => {
   return map[type] ? !map[type].some((w) => purpose.includes(w)) : false
 }
 
-const observationText = (flag) => ({
-  'Passive audience risk': 'This setup leans heavily on passive listening, which predicts rapid attention drop-off.',
-  'Too much presentation time': 'The format appears presentation-heavy, so discussion quality may suffer.',
-  'Unclear outcome': 'The expected outcome is fuzzy, which makes engagement and accountability harder.',
-  'No early interaction': 'No interaction in the first 10 minutes may signal a passive meeting tone.',
-  'Status meeting inflation': 'This resembles a status meeting, which often drifts into low-value airtime.',
-  'Large audience, low participation': 'Audience size and participation model may leave many attendees quiet.',
-  'Agenda-to-purpose mismatch': 'Purpose and format seem misaligned, creating mixed expectations.',
-  'Decision not named': 'A decision is expected, but the specific decision is not clearly named.',
-  'Could be handled asynchronously': 'This agenda may be more efficient as a written update than live meeting.'
+const observationText = (flag, form) => ({
+  'Passive audience risk': 'Participants are expected to mostly listen, with limited structured input.',
+  'Too much presentation time': 'Slides are the primary material without a corresponding interactive element.',
+  'Unclear outcome': 'The desired outcome is not clearly defined or measurable.',
+  'No early interaction': 'No participant interaction is planned in the first 10 minutes.',
+  'Status meeting inflation': 'The meeting is structured primarily as a status update.',
+  'Large audience, low participation': `Audience size (${form.audienceSize}) is high relative to participation design.`,
+  'Agenda-to-purpose mismatch': 'The stated purpose does not clearly align with the agenda structure.',
+  'Decision not named': 'A decision is expected, but no specific decision is named.',
+  'Could be handled asynchronously': 'No decision or interaction requires real-time discussion.'
 }[flag] || 'There are opportunities to sharpen structure and increase interaction.')
 
 const buildAgenda = (form) => `1) Quick opener + interaction (5 min)\n2) Context tied to purpose: ${form.purpose || 'Define meeting purpose'} (10 min)\n3) Collaborative segment (${form.role.toLowerCase()}) (15 min)\n4) Decision / outcome checkpoint (10 min)\n5) Confirm owners, timeline, and next steps (5 min)`
