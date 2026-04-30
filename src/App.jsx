@@ -139,11 +139,10 @@ function App() {
   }
 
   const riskColor = useMemo(() => {
-    if (!result) return 'text-slate-100'
-    if (result.score < 25) return 'text-emerald-400'
-    if (result.score < 50) return 'text-yellow-300'
-    if (result.score < 75) return 'text-orange-400'
-    return 'text-red-400'
+   if (result.score > 75) return 'text-emerald-400'
+if (result.score > 50) return 'text-yellow-300'
+if (result.score > 25) return 'text-orange-400'
+return 'text-red-400'
   }, [result])
 
   return (
@@ -273,13 +272,15 @@ const label = engagementScore > 75
 
 const uniqueFlags = [...new Set(flags)].slice(0, 5)
 
-  if (observations.length < 3) {
-    observations.push(
-      'The agenda includes clear structure and sequencing.',
-      'Participants have defined roles beyond passive listening.',
-      'The meeting design supports its intended outcome.'
-    )
-  }
+const observations = uniqueFlags.map((f) => observationText(f, form))
+
+if (observations.length < 3) {
+  observations.push(
+    'The agenda includes clear structure and sequencing.',
+    'Participants have defined roles beyond passive listening.',
+    'The meeting design supports its intended outcome.'
+  )
+}
 
   const recommendations = uniqueFlags.slice(0, 3).map((flag) => {
     const [title, why, example] = recommendationsMap[flag] || recommendationsMap['Unclear outcome']
@@ -289,7 +290,7 @@ const uniqueFlags = [...new Set(flags)].slice(0, 5)
   return {
     score: engagementScore,
     label,
-    summary: buildSummary(score, uniqueFlags),
+    summary: buildSummary(engagementScore, uniqueFlags),
     observations: observations.slice(0, 5),
     recommendations,
     improvedAgenda: buildAgenda(form),
