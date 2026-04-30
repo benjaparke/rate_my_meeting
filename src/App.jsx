@@ -1,6 +1,6 @@
 import React from 'react'
 import { useMemo, useState } from 'react'
-
+const observationText = (flag, form) => ({
 const sampleAgendas = {
   weekly: {
     title: 'Weekly Team Update',
@@ -336,16 +336,16 @@ const isMismatch = (purpose, type) => {
 }
 
 const observationText = (flag, form) => ({
-  'Passive audience risk': 'Participants are expected to mostly listen, with limited structured input.',
-  'Too much presentation time': 'Slides are the primary material without a corresponding interactive element.',
-  'Unclear outcome': 'The desired outcome is not clearly defined or measurable.',
-  'No early interaction': 'No participant interaction is planned in the first 10 minutes.',
-  'Status meeting inflation': 'The meeting is structured primarily as a status update.',
-  'Large audience, low participation': `Audience size (${form.audienceSize}) is high relative to participation design.`,
-  'Agenda-to-purpose mismatch': 'The stated purpose does not clearly align with the agenda structure.',
-  'Decision not named': 'A decision is expected, but no specific decision is named.',
-  'Could be handled asynchronously': 'No decision or interaction requires real-time discussion.'
-}[flag] || 'There are opportunities to sharpen structure and increase interaction.')
+  'Passive audience risk': 'Participants will mostly listen, which will likely lead to attention dropping off quickly.',
+  'Too much presentation time': 'The meeting will feel presentation-heavy, which will limit discussion and engagement.',
+  'Unclear outcome': 'The meeting will likely feel directionless because the outcome is not clearly defined.',
+  'No early interaction': 'The meeting will start passively, which makes it harder to engage people later.',
+  'Status meeting inflation': 'The meeting will likely drift into routine updates rather than meaningful discussion.',
+  'Large audience, low participation': `Most of the ${form.audienceSize} participants will remain passive unless interaction is structured.`,
+  'Agenda-to-purpose mismatch': 'The meeting will feel unfocused because the agenda does not clearly support the purpose.',
+  'Decision not named': 'The meeting may end without a clear decision because it is not explicitly defined.',
+  'Could be handled asynchronously': 'This will likely feel unnecessary as a live meeting and could have been handled asynchronously.'
+}[flag] || 'The meeting will work, but there are opportunities to improve engagement.')
 
 const buildAgenda = (form) => `1) Quick opener + interaction (5 min)\n2) Context tied to purpose: ${form.purpose || 'Define meeting purpose'} (10 min)\n3) Collaborative segment (${form.role.toLowerCase()}) (15 min)\n4) Decision / outcome checkpoint (10 min)\n5) Confirm owners, timeline, and next steps (5 min)`
 
