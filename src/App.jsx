@@ -138,12 +138,14 @@ function App() {
     setResult(analysis)
   }
 
-  const riskColor = useMemo(() => {
-   if (result.score > 75) return 'text-emerald-400'
-if (result.score > 50) return 'text-yellow-300'
-if (result.score > 25) return 'text-orange-400'
-return 'text-red-400'
-  }, [result])
+const riskColor = useMemo(() => {
+  if (!result || typeof result.score !== 'number') return 'text-slate-100'
+
+  if (result.score > 75) return 'text-emerald-400'
+  if (result.score > 50) return 'text-yellow-300'
+  if (result.score > 25) return 'text-orange-400'
+  return 'text-red-400'
+}, [result])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy via-[#0a1f3f] to-[#08152d] px-4 py-10">
@@ -190,35 +192,43 @@ return 'text-red-400'
           </div>
 
           <div className={`rounded-3xl border border-white/20 bg-white/10 p-6 shadow-xl backdrop-blur transition-all duration-500 ${result ? 'opacity-100 translate-y-0' : 'opacity-70 translate-y-2'}`}>
-            {!result ? <p className="mt-20 text-center text-slate-200">Run a reality check to reveal score, risks, and fast fixes.</p> : (
-              <div className="space-y-5">
-              <h3 className="text-xl font-bold text-white">Engagement Score</h3>
-<div className={`text-7xl font-black ${riskColor}`}>{result.score}</div>
-<p className="text-lg font-semibold text-white">{result.label}</p>
+          {!result ? (
+  <p className="mt-20 text-center text-slate-200">
+    Run a reality check to reveal score, risks, and fast fixes.
+  </p>
+) : (
+  <div className="space-y-5">
+    <h3 className="text-xl font-bold text-white">Engagement Score</h3>
+    <div className={`text-7xl font-black ${riskColor}`}>{result.score}</div>
+    <p className="text-lg font-semibold text-white">{result.label}</p>
 
-<p className="text-sm text-slate-300">
-  Based on structure, participation design, and clarity of outcome
-</p>
+    <p className="text-sm text-slate-300">
+      Based on structure, participation design, and clarity of outcome
+    </p>
 
-<p className="text-slate-200 mt-2">{result.summary}</p>
-                <Card title="What's likely to happen" items={result.observations} />
-                <div className="space-y-3">
-                  <h4 className="text-lg font-bold text-white">Best fixes</h4>
-                  {result.recommendations.map((rec) => <div key={rec.title} className="rounded-xl bg-white/95 p-4 text-slate-900"><p className="font-bold">{rec.title}</p><p className="text-sm">{rec.why}</p><p className="mt-1 text-sm text-orange-700">Example: {rec.example}</p></div>)}
-                </div>
-                <div className="rounded-xl bg-[#041229] p-4 text-slate-100">
-                  <h4 className="font-bold text-teal">Optional improved agenda</h4>
-                  <pre className="mt-2 whitespace-pre-wrap text-sm">{result.improvedAgenda}</pre>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-      </div>
+    <p className="text-slate-200 mt-2">{result.summary}</p>
+
+    <Card title="What's likely to happen" items={result.observations} />
+
+    <div className="space-y-3">
+      <h4 className="text-lg font-bold text-white">Best fixes</h4>
+      {result.recommendations.map((rec) => (
+        <div key={rec.title} className="rounded-xl bg-white/95 p-4 text-slate-900">
+          <p className="font-bold">{rec.title}</p>
+          <p className="text-sm">{rec.why}</p>
+          <p className="mt-1 text-sm text-orange-700">Example: {rec.example}</p>
+        </div>
+      ))}
     </div>
-  )
-}
 
+    <div className="rounded-xl bg-[#041229] p-4 text-slate-100">
+      <h4 className="font-bold text-teal">Optional improved agenda</h4>
+      <pre className="mt-2 whitespace-pre-wrap text-sm">
+        {result.improvedAgenda}
+      </pre>
+    </div>
+  </div>
+)}
 function scoreMeeting(form) {
   let score = 40
   const flags = []
