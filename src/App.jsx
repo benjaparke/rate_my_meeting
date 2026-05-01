@@ -187,7 +187,7 @@ const riskColor = useMemo(() => {
 
         <section className="grid gap-6 lg:grid-cols-[1fr_1fr] xl:grid-cols-[1.05fr_1fr]">
           <div className="rounded-3xl bg-white/95 p-6 text-slate-900 shadow-xl">
-            <h2 className="text-xl font-bold">Enter your meeting detais or try a sample agenda:</h2>
+            <h2 className="text-xl font-bold">Enter your meeting details or try a sample agenda:</h2>
             <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {Object.entries(sampleAgendas).map(([key, sample]) => (
                 <button key={key} onClick={() => setForm(sample.data)} className="rounded-xl bg-teal px-3 py-2 text-sm font-semibold text-navy transition hover:scale-[1.02] hover:bg-cyan-300">
