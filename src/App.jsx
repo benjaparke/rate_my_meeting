@@ -188,9 +188,9 @@ const riskColor = useMemo(() => {
         <section className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-3xl bg-white/95 p-6 text-slate-900 shadow-xl">
             <h2 className="text-xl font-bold">Sample agendas</h2>
-            <div className="mt-4 flex flex-wrap gap-3">
+            <div className="mt-4 flex flex-wrap gap-2 lg:flex-nowrap">
               {Object.entries(sampleAgendas).map(([key, sample]) => (
-                <button key={key} onClick={() => setForm(sample.data)} className="rounded-xl bg-teal px-4 py-2 font-semibold text-navy transition hover:scale-[1.02] hover:bg-cyan-300">
+                <button key={key} onClick={() => setForm(sample.data)} className="rounded-xl bg-teal px-3 py-2 text-sm font-semibold text-navy transition hover:scale-[1.02] hover:bg-cyan-300 lg:flex-1">
                   {sample.title}
                 </button>
               ))}
@@ -199,8 +199,8 @@ const riskColor = useMemo(() => {
             <div className="mt-6 space-y-4">
               <Field label="Agenda*"><textarea value={form.agenda} onChange={(e) => setForm({ ...form, agenda: e.target.value })} placeholder="List agenda sections, ideally with time blocks." className="h-28 w-full rounded-xl border p-3" /></Field>
               <DoubleRow>
-                <Field label="Meeting purpose"><input value={form.purpose} onChange={(e) => setForm({ ...form, purpose: e.target.value })} className="w-full rounded-xl border p-3" /></Field>
-                <Field label="Desired outcome"><input value={form.outcome} onChange={(e) => setForm({ ...form, outcome: e.target.value })} placeholder="By the end of this meeting, we will…" className="w-full rounded-xl border p-3" /></Field>
+                <Field label="Meeting purpose"><textarea value={form.purpose} onChange={(e) => setForm({ ...form, purpose: e.target.value })} className="h-24 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
+                <Field label="Desired outcome"><textarea value={form.outcome} onChange={(e) => setForm({ ...form, outcome: e.target.value })} placeholder="By the end of this meeting, we will…" className="h-24 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
               </DoubleRow>
               <FormSelects form={form} setForm={setForm} />
 
