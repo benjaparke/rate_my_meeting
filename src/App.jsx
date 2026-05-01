@@ -338,6 +338,14 @@ async function generateInsights({ score, flags, form }) {
     throw new Error('Missing VITE_OPENAI_API_KEY')
   }
 
+  const scoreContext = score >= 75
+    ? 'strong meeting with minor refinements'
+    : score >= 50
+      ? 'mixed meeting with some friction'
+      : 'high-risk meeting needing redesign'
+
+  const promptFlags = score >= 75 ? [] : flags
+
   const response = await fetch('https://api.openai.com/v1/responses', {
     method: 'POST',
     headers: {
@@ -352,7 +360,7 @@ async function generateInsights({ score, flags, form }) {
           content: [
             {
               type: 'input_text',
-              text: 'You are a meeting coach. Return valid JSON only with keys: summary, observations, recommendations. observations must be an array of exactly 3 strings. recommendations must be an array of objects with title, why, example.\n\nScoring rules (strict):\n- engagementScore is the PRIMARY source of truth.\n- flags are SECONDARY signals and must never override engagementScore.\n- Never contradict engagementScore.\n\nTone and prediction rules by score:\n1) If engagementScore >= 75:\n- Use a mostly positive tone.\n- Describe what WILL go well.\n- Allow at most ONE minor improvement point total across output.\n- Do NOT say or imply the meeting will be unfocused, unclear, ineffective, unnecessary, directionless, or likely to fail.\n\n2) If engagementScore is 50-74:\n- Use a balanced tone: clear strengths plus likely friction points.\n\n3) If engagementScore < 50:\n- Emphasize likely problems, risks, and breakdowns.\n- Do NOT present an overly positive outlook.\n\nObservation content rules:\n- observations must be TRUE predictions, not abstract evaluations.\n- Prefer phrasing like: "Participants will...", "Discussion will...", "The meeting will...".\n- Avoid abstract wording like "the outcome is unclear" without a prediction.\n\nAnti-contradiction and anti-redundancy rules:\n- If score is high, do not include negative failure predictions.\n- If score is low, do not include overly positive claims.\n- summary, observations, and recommendations must not repeat the same idea; each section should add distinct value.'
+              text: 'You are a meeting coach. Return valid JSON only with keys: summary, observations, recommendations. observations must be an array of exactly 3 strings. recommendations must be an array of objects with title, why, example.\n\nUse scoreContext as the primary interpretation. Flags are only supporting details.\n\nScoring rules (strict):\n- engagementScore is the PRIMARY source of truth.\n- scoreContext is the PRIMARY interpretation layer for tone and predictions.\n- flags are SECONDARY signals and must never override engagementScore or scoreContext.\n- Never contradict engagementScore.\n\nTone and prediction rules by score:\n1) If engagementScore >= 75:\n- summary must be positive.\n- observations must describe what WILL go well.\n- recommendations must be light optimizations.\n- Do NOT mention failure, confusion, unclear outcomes, unfocused discussion, or unnecessary meeting.\n- Allow at most ONE minor improvement point total across output.\n\n2) If engagementScore is 50-74:\n- Use a balanced tone: clear strengths plus likely friction points.\n\n3) If engagementScore < 50:\n- Emphasize likely problems, risks, and breakdowns.\n- Do NOT present an overly positive outlook.\n\nObservation content rules:\n- observations must be TRUE predictions, not abstract evaluations.\n- Prefer phrasing like: "Participants will...", "Discussion will...", "The meeting will...".\n- Avoid abstract wording like "the outcome is unclear" without a prediction.\n\nAnti-contradiction and anti-redundancy rules:\n- If score is high, do not include negative failure predictions.\n- If score is low, do not include overly positive claims.\n- summary, observations, and recommendations must not repeat the same idea; each section should add distinct value.'
             }
           ]
         },
@@ -363,7 +371,8 @@ async function generateInsights({ score, flags, form }) {
               type: 'input_text',
               text: JSON.stringify({
                 engagementScore: score,
-                flags,
+                scoreContext,
+                flags: promptFlags,
                 purpose: form.purpose,
                 agenda: form.agenda,
                 outcome: form.outcome
