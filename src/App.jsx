@@ -147,7 +147,10 @@ function App() {
       })
     } catch (error) {
       console.error('Failed to generate AI insights, using fallback:', error)
-      setResult(analysis)
+      setResult({
+        ...analysis,
+        summary: 'AI feedback could not be generated. Showing basic rule-based feedback.',
+      })
     } finally {
       setIsAnalyzing(false)
     }
@@ -377,6 +380,8 @@ async function generateInsights({ score, flags, form }) {
   })
 
   if (!response.ok) {
+    const errorText = await response.text()
+    console.error('OpenAI API request failed', { status: response.status, body: errorText })
     throw new Error(`OpenAI request failed: ${response.status}`)
   }
 
@@ -386,7 +391,6 @@ async function generateInsights({ score, flags, form }) {
   if (!content) {
     throw new Error('No model output')
   }
-console.log('AI RAW OUTPUT:', content)
   const parsed = JSON.parse(content)
 
   if (!parsed.summary || !Array.isArray(parsed.observations) || !Array.isArray(parsed.recommendations)) {
