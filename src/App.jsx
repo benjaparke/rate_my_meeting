@@ -27,7 +27,7 @@ const sampleAgendas = {
       length: '60',
       meetingType: 'Decision-making',
       role: 'Decision-making',
-      materials: ['Pre-read', 'Worksheet'],
+      materials: ['Pre-read', 'Worksheet', 'Handout'],
       earlyInteraction: 'yes',
       decisionRequired: 'yes',
       outcome: 'By the end of this meeting, we will select one strategic focus and assign accountable leads.'
@@ -43,7 +43,7 @@ const sampleAgendas = {
       length: '60',
       meetingType: 'Training',
       role: 'Hands-on activity',
-      materials: ['Demo', 'Worksheet'],
+      materials: ['Demo', 'Worksheet', 'Interactive'],
       earlyInteraction: 'yes',
       decisionRequired: 'no',
       outcome: 'By the end of this meeting, we will complete account setup and know where to get help.'
@@ -206,7 +206,7 @@ const riskColor = useMemo(() => {
 
               <Field label="Materials">
                 <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
-                  {['Slides', 'Pre-read', 'Worksheet', 'Demo', 'None', 'Other'].map((item) => (
+                  {['Slides', 'Pre-read', 'Handout', 'Worksheet', 'Demo', 'Interactive', 'None', 'Other'].map((item) => (
                     <label key={item} className="flex items-center gap-2 rounded-lg bg-slate-100 p-2 text-sm"><input type="checkbox" checked={form.materials.includes(item)} onChange={() => handleMaterialToggle(item)} />{item}</label>
                   ))}
                 </div>
@@ -274,7 +274,10 @@ function scoreMeeting(form) {
   const purpose = form.purpose.toLowerCase()
   const len = Number(form.length)
   const sectionCount = form.agenda.split('\n').filter(Boolean).length
-  const hasInteractiveAgenda = /(workshop|discussion|activity|q&a|exercise|breakout|poll|hands-on|brainstorm)/i.test(form.agenda)
+  const hasInteractiveAgendaText = /(workshop|discussion|activity|q&a|exercise|breakout|poll|hands-on|brainstorm)/i.test(form.agenda)
+  const hasInteractiveMaterial = form.materials.includes('Interactive')
+  const hasInteractiveRole = ['Hands-on activity', 'Active discussion', 'Decision-making'].includes(form.role)
+  const hasInteractiveAgenda = hasInteractiveAgendaText || hasInteractiveMaterial || hasInteractiveRole
   const hasTimeBlocks = /\b\d+\s?min\b|\d{1,2}:\d{2}/i.test(form.agenda)
   const vagueOutcome = /(discuss|review|align|talk about|sync)/i.test(outcome)
   const measurableOutcome = /(decide|select|assign|approve|owner|deadline|by\s+\w+day|complete)/i.test(outcome)
@@ -288,7 +291,7 @@ function scoreMeeting(form) {
   if (form.role === 'Mostly listening') { score += 20; flags.push('Passive audience risk') }
   if (form.audienceSize === '11-25' && form.earlyInteraction === 'no') { score += 10; flags.push('Large audience, low participation') }
   if (['26-50', '50+'].includes(form.audienceSize) && ['Mostly listening', 'Some discussion'].includes(form.role)) { score += 15; flags.push('Large audience, low participation') }
-  if (form.materials.includes('Slides') && !form.materials.some((m) => ['Worksheet', 'Demo', 'Pre-read'].includes(m))) { score += 10; flags.push('Too much presentation time') }
+  if (form.materials.includes('Slides') && !form.materials.some((m) => ['Pre-read', 'Handout', 'Worksheet', 'Demo', 'Interactive'].includes(m))) { score += 10; flags.push('Too much presentation time') }
   if (sectionCount > 4 && !decisionNamed) score += 10
   if (form.earlyInteraction === 'no') { score += 15; flags.push('No early interaction') }
   if (isMismatch(purpose, form.meetingType)) { score += 15; flags.push('Agenda-to-purpose mismatch') }
@@ -298,6 +301,8 @@ function scoreMeeting(form) {
   if (['Some discussion', 'Active discussion', 'Decision-making', 'Hands-on activity', 'Mixed'].includes(form.role)) score -= 10
   if (len <= 30 && outcome) score -= 10
   if (form.materials.includes('Pre-read')) score -= 10
+  if (form.materials.includes('Handout')) score -= 5
+  if (form.materials.includes('Interactive')) score -= 15
   if (form.decisionRequired === 'yes' && decisionNamed) score -= 15
   if (form.earlyInteraction === 'yes') score -= 10
   if (hasTimeBlocks) score -= 10
