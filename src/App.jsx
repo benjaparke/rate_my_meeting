@@ -306,14 +306,6 @@ const uniqueFlags = [...new Set(flags)].slice(0, 5)
 
 const observations = uniqueFlags.map((f) => observationText(f, form))
 
-if (observations.length < 3) {
-  observations.push(
-    'The agenda includes clear structure and sequencing.',
-    'Participants have defined roles beyond passive listening.',
-    'The meeting design supports its intended outcome.'
-  )
-}
-
   const recommendations = uniqueFlags.slice(0, 3).map((flag) => {
     const [title, why, example] = recommendationsMap[flag] || recommendationsMap['Unclear outcome']
     return { title, why, example }
