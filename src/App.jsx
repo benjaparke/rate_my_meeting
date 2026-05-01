@@ -179,7 +179,7 @@ const riskColor = useMemo(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy via-[#0a1f3f] to-[#08152d] px-4 py-10">
-      <div className="mx-auto max-w-7xl space-y-8">
+      <div className="mx-auto max-w-[1400px] xl:max-w-[1600px] space-y-8">
         <header className="rounded-3xl border border-teal/30 bg-white/5 p-8 shadow-2xl backdrop-blur">
           <h1 className="text-4xl font-black tracking-tight text-white md:text-5xl">Meeting Reality Check</h1>
           <p className="mt-2 text-lg text-teal">Stress-test your agenda before people start checking out.</p>
@@ -216,7 +216,19 @@ const riskColor = useMemo(() => {
                 <Toggle label="Decision expected?" value={form.decisionRequired} onChange={(val) => setForm({ ...form, decisionRequired: val })} />
               </DoubleRow>
 
-              <button onClick={evaluate} disabled={isAnalyzing} className="w-full rounded-xl bg-orange py-3 text-lg font-bold text-white shadow-lg transition hover:translate-y-[-1px] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">{isAnalyzing ? 'Analyzing...' : 'Run Reality Check'}</button>
+              <div className="flex gap-3">
+                <button onClick={evaluate} disabled={isAnalyzing} className="w-full rounded-xl bg-orange py-3 text-lg font-bold text-white shadow-lg transition hover:translate-y-[-1px] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70">{isAnalyzing ? 'Analyzing...' : 'Run Reality Check'}</button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForm(defaultForm)
+                    setResult(null)
+                  }}
+                  className="w-full rounded-xl bg-slate-300 py-3 text-lg font-bold text-slate-800 hover:bg-slate-400"
+                >
+                  Clear Form
+                </button>
+              </div>
               <p className="text-center text-sm text-slate-600">Takes ~20 seconds. No one will know you checked.</p>
             </div>
           </div>
