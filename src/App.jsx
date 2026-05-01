@@ -150,6 +150,18 @@ function App() {
       setResult({
         ...analysis,
         summary: 'AI feedback could not be generated. Showing basic rule-based feedback.',
+        observations: [
+          'The app could not reach the AI feedback generator.',
+          'The score is still based on the rule-based meeting evaluation.',
+          'Check the browser console for the API error.'
+        ],
+        recommendations: [
+          {
+            title: 'Check the API setup',
+            why: 'The AI feedback layer did not return a usable response.',
+            example: 'Confirm the VITE_OPENAI_API_KEY environment variable is set in Vercel and that the API response is valid JSON.'
+          }
+        ]
       })
     } finally {
       setIsAnalyzing(false)
