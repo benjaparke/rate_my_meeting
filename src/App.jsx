@@ -292,7 +292,7 @@ function scoreMeeting(form) {
 
  score = Math.max(0, Math.min(100, score))
 
-const engagementScore = 100 - score
+const engagementScore = Math.min(96, 100 - score)
 
 const label = engagementScore > 75
   ? 'Highly Engaging'
