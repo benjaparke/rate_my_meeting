@@ -466,7 +466,89 @@ const observationText = (flag, form) => ({
   'Could be handled asynchronously': 'This will likely feel unnecessary as a live meeting and could have been handled asynchronously.'
 }[flag] || 'The meeting will work, but there are opportunities to improve engagement.')
 
-const buildAgenda = (form) => `1) Quick opener + interaction (5 min)\n2) Context tied to purpose: ${form.purpose || 'Define meeting purpose'} (10 min)\n3) Collaborative segment (${form.role.toLowerCase()}) (15 min)\n4) Decision / outcome checkpoint (10 min)\n5) Confirm owners, timeline, and next steps (5 min)`
+const buildAgenda = (form) => {
+  const meetingType = form.meetingType || 'Status / Update'
+  const role = (form.role || 'Team Member').toLowerCase()
+  const purpose = form.purpose || 'align on current priorities'
+  const minutes = Number.parseInt(form.length, 10) || 45
+  const decisionRequired = form.decisionRequired === 'yes'
+
+  const totalItems = minutes <= 30 ? 4 : minutes <= 60 ? 5 : 6
+  const baseTime = Math.floor(minutes / totalItems)
+  let remaining = minutes - baseTime * totalItems
+  const times = Array.from({ length: totalItems }, () => {
+    const extra = remaining > 0 ? 1 : 0
+    if (remaining > 0) remaining -= 1
+    return baseTime + extra
+  })
+
+  const typeTemplates = {
+    'Status / Update': [
+      `Purpose + quick round (${role} updates)`,
+      'Async reference sweep (doc/board) + blockers',
+      `Top priority check linked to: ${purpose}`,
+      'Risks, owners, and immediate follow-ups'
+    ],
+    'Decision-making': [
+      `Frame decision for: ${purpose}`,
+      'Review options and trade-offs',
+      'Decision block: choose path + rationale',
+      `Role lens (${role}): impacts + constraints`,
+      'Commit actions, owners, and timeline'
+    ],
+    Training: [
+      `Training goal + outcomes: ${purpose}`,
+      'Demo walkthrough (live example)',
+      `Hands-on practice with ${role} perspective`,
+      'Q&A, pitfalls, and quick coaching',
+      'Synthesis + next practice steps'
+    ],
+    Brainstorm: [
+      `Prompt + success criteria for: ${purpose}`,
+      'Idea generation sprint',
+      'Cluster themes and combine ideas',
+      `Role lens (${role}) to pressure-test ideas`,
+      'Prioritize top concepts + next experiments'
+    ],
+    Alignment: [
+      `Context reset + objective: ${purpose}`,
+      'Discussion round on assumptions and concerns',
+      `Alignment checkpoint (${role} viewpoint)`,
+      'Resolve gaps, dependencies, and risks',
+      'Confirm shared plan + next steps'
+    ]
+  }
+
+  const fallback = [
+    `Set context for: ${purpose}`,
+    `Discussion segment with ${role} perspective`,
+    'Synthesize key points',
+    'Actions and follow-ups'
+  ]
+
+  const segments = [...(typeTemplates[meetingType] || fallback)]
+
+  const hasDecisionLine = segments.some((line) => /decision block/i.test(line))
+  if (decisionRequired && !hasDecisionLine) {
+    segments.push('Decision step: finalize choice and owner')
+  }
+  if (!decisionRequired) {
+    const decisionIndex = segments.findIndex((line) => /decision/i.test(line))
+    if (decisionIndex >= 0) {
+      segments[decisionIndex] = 'Synthesis checkpoint: key takeaways'
+    }
+  }
+
+  if (!segments.some((line) => /next steps|follow-ups|actions/i.test(line))) {
+    segments.push(decisionRequired ? 'Confirm execution steps' : 'Next steps and owners')
+  }
+
+  const finalSegments = segments.slice(0, totalItems)
+
+  return finalSegments
+    .map((line, index) => `${index + 1}) ${line} (${times[index]} min)`)
+    .join('\n')
+}
 
 const Field = ({ label, children }) => <label className="block"><p className="mb-1 text-sm font-semibold text-slate-700">{label}</p>{children}</label>
 const DoubleRow = ({ children }) => <div className="grid gap-4 md:grid-cols-2">{children}</div>
