@@ -179,28 +179,28 @@ const riskColor = useMemo(() => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-navy via-[#0a1f3f] to-[#08152d] px-4 py-10">
-      <div className="mx-auto max-w-6xl space-y-8">
+      <div className="mx-auto max-w-7xl space-y-8">
         <header className="rounded-3xl border border-teal/30 bg-white/5 p-8 shadow-2xl backdrop-blur">
           <h1 className="text-4xl font-black tracking-tight text-white md:text-5xl">Meeting Reality Check</h1>
           <p className="mt-2 text-lg text-teal">Stress-test your agenda before people start checking out.</p>
         </header>
 
-        <section className="grid gap-6 lg:grid-cols-2">
+        <section className="grid gap-6 lg:grid-cols-[1fr_1fr] xl:grid-cols-[1.05fr_1fr]">
           <div className="rounded-3xl bg-white/95 p-6 text-slate-900 shadow-xl">
             <h2 className="text-xl font-bold">Sample agendas</h2>
-            <div className="mt-4 flex flex-wrap gap-2 lg:flex-nowrap">
+            <div className="mt-4 grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
               {Object.entries(sampleAgendas).map(([key, sample]) => (
-                <button key={key} onClick={() => setForm(sample.data)} className="rounded-xl bg-teal px-3 py-2 text-sm font-semibold text-navy transition hover:scale-[1.02] hover:bg-cyan-300 lg:flex-1">
+                <button key={key} onClick={() => setForm(sample.data)} className="rounded-xl bg-teal px-3 py-2 text-sm font-semibold text-navy transition hover:scale-[1.02] hover:bg-cyan-300">
                   {sample.title}
                 </button>
               ))}
             </div>
 
-            <div className="mt-6 space-y-4">
-              <Field label="Agenda*"><textarea value={form.agenda} onChange={(e) => setForm({ ...form, agenda: e.target.value })} placeholder="List agenda sections, ideally with time blocks." className="h-28 w-full rounded-xl border p-3" /></Field>
+            <div className="mt-6 space-y-3">
+              <Field label="Agenda*"><textarea value={form.agenda} onChange={(e) => setForm({ ...form, agenda: e.target.value })} placeholder="List agenda sections, ideally with time blocks." className="h-24 w-full rounded-xl border p-3" /></Field>
               <DoubleRow>
-                <Field label="Meeting purpose"><textarea value={form.purpose} onChange={(e) => setForm({ ...form, purpose: e.target.value })} className="h-24 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
-                <Field label="Desired outcome"><textarea value={form.outcome} onChange={(e) => setForm({ ...form, outcome: e.target.value })} placeholder="By the end of this meeting, we will…" className="h-24 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
+                <Field label="Meeting purpose"><textarea value={form.purpose} onChange={(e) => setForm({ ...form, purpose: e.target.value })} className="h-20 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
+                <Field label="Desired outcome"><textarea value={form.outcome} onChange={(e) => setForm({ ...form, outcome: e.target.value })} placeholder="By the end of this meeting, we will…" className="h-20 w-full resize-y overflow-y-auto rounded-xl border p-3" /></Field>
               </DoubleRow>
               <FormSelects form={form} setForm={setForm} />
 
