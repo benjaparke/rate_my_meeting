@@ -1,4 +1,4 @@
-# 📊 Rate My Meeting
+# Rate My Meeting
 
 > Stress-test your agenda *before* people start checking out
 
@@ -191,4 +191,4 @@ MIT - Use freely, remix it, share it with your team.
 
 ---
 
-**The ultimate meeting compliment**: "That was actually productive." 🎯
+**The ultimate meeting compliment**: "That was actually productive."
