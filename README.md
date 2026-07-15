@@ -9,18 +9,18 @@ A web app that helps you design engaging meetings by evaluating your agenda, ide
 ![Vite](https://img.shields.io/badge/Vite-5.4.8-purple)
 ![Live](https://img.shields.io/badge/Live-Vercel-000000)
 
-## 🎯 The Problem
+## The Problem
 
 You schedule a meeting. The agenda looks reasonable. Then:
 
-- 📉 People stop talking 10 minutes in
-- 🤔 Nobody's clear what you're deciding
-- 💤 It becomes another status update
-- 📧 Someone says "this could've been an email"
+- People stop talking 10 minutes in
+- Nobody's clear what you're deciding
+- It becomes another status update
+- Someone says "this could've been an email"
 
 **Solution?** Test your meeting design before you book the room.
 
-## 💡 What It Does
+## What It Does
 
 1. **Enter your meeting details**: agenda, purpose, audience, duration, and materials
 2. **Get a reality check**: Engagement score (0–100) based on meeting design patterns
@@ -31,13 +31,13 @@ You schedule a meeting. The agenda looks reasonable. Then:
 ### Scoring Criteria
 
 The app evaluates:
-- ✅ **Clarity**: Is the outcome explicitly defined?
-- ✅ **Participation**: Is there structured interaction, or just listening?
-- ✅ **Fit**: Does the duration match the agenda?
-- ✅ **Structure**: Are there time blocks and decision points?
-- ✅ **Async potential**: Could this be handled without real-time discussion?
+- **Clarity**: Is the outcome explicitly defined?
+- **Participation**: Is there structured interaction, or just listening?
+- **Fit**: Does the duration match the agenda?
+- **Structure**: Are there time blocks and decision points?
+- **Async potential**: Could this be handled without real-time discussion?
 
-## 😆 Example Findings
+### Example Findings
 
 | Input | Score | Risk | Suggestion |
 |-------|-------|------|-----------|
@@ -45,16 +45,16 @@ The app evaluates:
 | 30-min strategic planning, interactive breakout, clear decision | 89 | None | Ship it |
 | 45-min training with slides only, large audience | 41 | "Passive audience risk" | Add hands-on practice or worksheet |
 
-## 🚀 Features
+## Features
 
-- ⚡ **Instant feedback**: Get your score in ~20 seconds
-- 📋 **Sample agendas**: Load templates (weekly update, strategy, onboarding) to see best practices
-- 🎨 **Beautiful UI**: Dark mode, color-coded scores, easy-to-read cards
-- 🤖 **AI-powered insights**: Deeper analysis with GPT-4o-mini (optional)
-- 📝 **Improved agenda generation**: Automatically restructured agenda with suggested sections
-- 📱 **Responsive design**: Works on desktop, tablet, and mobile
+- **Instant feedback**: Get your score in ~20 seconds
+- **Sample agendas**: Load templates (weekly update, strategy, onboarding) to see best practices
+- **Beautiful UI**: Dark mode, color-coded scores, easy-to-read cards
+- **AI-powered insights**: Deeper analysis with GPT-4o-mini (optional)
+- **Improved agenda generation**: Automatically restructured agenda with suggested sections
+- **Responsive design**: Works on desktop, tablet, and mobile
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: React 18.3.1
 - **Build**: Vite 5.4.8
@@ -62,7 +62,7 @@ The app evaluates:
 - **AI**: OpenAI API (optional, for deeper insights)
 - **Deployment**: Vercel
 
-## 💻 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Node.js 16+
@@ -106,16 +106,16 @@ To unlock AI-powered meeting analysis:
 
 Without the key, the app still works—you'll get rule-based feedback instead.
 
-## 🌐 Live Demo
+## Live Demo
 
-👉 **[rate-my-meeting-silk.vercel.app](https://rate-my-meeting-silk.vercel.app)**
+**[rate-my-meeting-silk.vercel.app](https://rate-my-meeting-silk.vercel.app)**
 
 Try it with:
-- Your actual meeting agenda (no one will know 😉)
+- Your actual meeting agenda (no one will know)
 - A sample template (Weekly Update, Strategy, Onboarding)
 - A notoriously bad meeting from your calendar (for science)
 
-## 📖 How to Use
+## How to Use
 
 ### For Meeting Organizers
 
@@ -137,7 +137,7 @@ Try it with:
 - Use this as part of your meeting norms
 - Reference sample agendas in team guidelines
 
-## 🎓 Design Philosophy
+## Design Philosophy
 
 **Good meetings are not accidental.** They're the result of:
 
@@ -149,14 +149,14 @@ Try it with:
 
 This tool helps you audit meetings against these principles.
 
-## 📊 Scoring Reference
+## Scoring Reference
 
 - **75–100 ("Highly Engaging")**: Ship it. Minor tweaks optional.
 - **50–74 ("Moderately Engaging")**: Solid structure, but a few friction points.
 - **25–49 ("At Risk of Dragging")**: Redesign needed before inviting the team.
 - **0–24 ("This might be an email")**: Consider whether this should be a meeting at all.
 
-## 🚩 Common Red Flags & Fixes
+## Common Red Flags & Fixes
 
 | Red Flag | Why It's Bad | Quick Fix |
 |----------|-------------|-----------|
@@ -167,7 +167,7 @@ This tool helps you audit meetings against these principles.
 | Large audience, no structure | Most people stay silent | Use breakout groups, role assignments, or written input first |
 | No materials | People can't prepare | Add pre-read, worksheet, or demo link |
 
-## 🔧 Customization
+## Customization
 
 The app comes with built-in templates and recommendation rules. To modify:
 
@@ -176,7 +176,7 @@ The app comes with built-in templates and recommendation rules. To modify:
 - **Recommendations**: Update `recommendationsMap` with your team's best practices
 - **Styling**: Tweak Tailwind config in `tailwind.config.js`
 
-## 🤝 Contributing
+## Contributing
 
 Found a bug? Have a better red flag to detect? Want to add more templates?
 
@@ -185,7 +185,7 @@ Found a bug? Have a better red flag to detect? Want to add more templates?
 3. Make your changes
 4. Open a PR with details
 
-## 📝 License
+## License
 
 MIT - Use freely, remix it, share it with your team.
 
